@@ -36,12 +36,24 @@ navigator.mediaDevices.getUserMedia(constraints)
     });
     recorder.addEventListener("stop",(e)=>{
         let blob = new Blob(chunks, { type: "video/mp4" });
-        let  videoURL = URL.createObjectURL(blob);
+        // let  videoURL = URL.createObjectURL(blob);
 
-        let a = document.createElement("a");
-        a.href = videoURL;
-        a.download = "stream.mp4";
-        a.click();
+        if(db){
+            let videoId = shortid();
+            let dbTransaction = db.transaction("video", "readwrite");
+            let videoStore = dbTransaction.objectStore("video");
+            let videoEntry = {
+                id: `vid-${videoId}`,
+                blobData: blob
+            }
+            videoStore.add(videoEntry);
+        }
+
+
+        // let a = document.createElement("a");
+        // a.href = videoURL;
+        // a.download = "stream.mp4";
+        // a.click();
     });
 });
 
@@ -66,6 +78,7 @@ recordBtnCont.addEventListener("click",(e)=>{
 
 
 captureBtnCont.addEventListener("click",(e)=>{
+    captureBtn.classList.add("scale-capture");
     let canvas = document.createElement("canvas");
     canvas.height = video.videoHeight;
     canvas.width = video.videoWidth;
@@ -77,11 +90,28 @@ captureBtnCont.addEventListener("click",(e)=>{
     tool.fillStyle = transparentColor;
     tool.fillRect(0,0,canvas.width,canvas.height);
 
-    const imageURL = canvas.toDataURL();
-    let a = document.createElement("a");
-    a.href = imageURL;
-    a.download = "image.jpg";
-    a.click();
+    let imageURL = canvas.toDataURL();
+
+    if(db){
+        let imageId = shortid();
+        let dbTransaction = db.transaction("image", "readwrite");
+        let imageStore = dbTransaction.objectStore("image");
+        let imageEntry = {
+            id: `img-${imageId}`,
+            url: imageURL
+        }
+        imageStore.add(imageEntry);
+    }
+
+
+    setTimeout(()=>{
+        captureBtn.classList.remove("scale-capture");
+    },500);
+
+    // let a = document.createElement("a");
+    // a.href = imageURL;
+    // a.download = "image.jpg";
+    // a.click();
 });
 
 

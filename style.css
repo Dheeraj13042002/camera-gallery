@@ -136,3 +136,13 @@ video{
     /* background-color: #8bc34a52; */
     z-index: 1;
 }
+
+.gallery{
+    position: absolute;
+    right: 3rem;
+    bottom: 3rem;
+    color: white;
+    font-size: 4rem;
+    cursor: pointer;
+    z-index: 2;
+}
